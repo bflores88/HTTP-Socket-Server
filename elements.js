@@ -191,30 +191,40 @@ a:hover{
 
 const cssLength = cssBody.length;
 
+let date = new Date();
+let modified = date;
+
+console.log(modified);
+
 const elements = {
   error: {
     body: errorBody,
-    length: errorLength
+    length: errorLength,
+    status: `404 Page Not Found`
   },
 
   hydrogen: {
     body: hydrogenBody,
-    length: hydrogenLength
+    length: hydrogenLength,
+    status: `200 OK`
   },
 
   helium: {
     body: heliumBody,
-    length: heliumLength
+    length: heliumLength,
+    status: `200 OK`
   },
 
   index: {
     body: indexBody,
-    length: indexLength
+    length: indexLength,
+    status: `200 OK`
   },
 
   css: {
     body: cssBody,
-    length: cssLength
+    length: cssLength,
+    status: `200 OK`
   }
 }
 
