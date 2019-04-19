@@ -3,12 +3,6 @@
 const net = require('net');
 const process = require('process');
 
-
-let port = 80;
-if (host === 'localhost') {
-  port = 8080;
-}
-
 let headerObj = {};
 
 let CLA = process.argv;
@@ -18,7 +12,12 @@ let URI = CLA[4];
 let body = '';
 let length = 0;
 
-if(CLA[5] !== undefined){
+let port = 80;
+if (host === 'localhost') {
+  port = 8080;
+}
+
+if (CLA[5] !== undefined) {
   body = CLA[5];
   length = body.length;
 }
@@ -28,7 +27,7 @@ if (!CLA[2]) {
     `\r\n\r\nPlease enter valid arguments for host, method, URI, and body (if POST method is used).\r\n
     Example:  $ node client.js www.example.com GET /\r\n
     Valid methods:
-    GET - I want a resource
+    GET - I want a resource including the header and body
     POST - I want to send you data
     HEAD - I just want the response headers\r\n\r\n`,
   );
@@ -41,25 +40,29 @@ let request = `${method} ${URI} HTTP/1.1\r\nAccept: text/html\r\nDate: ${date}\r
 
 const client = net.createConnection(port, host, function() {
   client.setEncoding('utf-8');
-  console.log('Client connected to: ' + port);
-  console.log('My Req: ' + request);
+  process.stdout.write('Client connected to: ' + port);
+  process.stdout.write('My Req: ' + request);
   client.write(request);
 });
 
 client.on('data', function(data) {
+  if (data.indexOf('HTTP/1.1 40' !== -1)) {
+    process.stdout.write('what the hell\r\n');
+  } else {
+    let headerEnd = data.indexOf('\r\n\r\n');
+    let getHeader = data.slice(0, headerEnd);
+    headerObj[host] = getHeader;
 
-  let headerEnd = data.indexOf('\r\n\r\n');
-  let getHeader = data.slice(0, headerEnd);
-  headerObj[host] = getHeader;
+    process.stdout.write(data);
+  }
 
-  process.stdout.write(data);
   if (data.toString().endsWith('exit')) {
     client.destroy();
   }
 });
 
 client.on('close', function() {
-  console.log('Client closed');
+  process.stdout.write('Client closed');
 });
 
 client.on('error', function(err) {
