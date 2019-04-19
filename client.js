@@ -3,6 +3,12 @@
 const net = require('net');
 const process = require('process');
 
+
+let port = 80;
+if (host === 'localhost') {
+  port = 8080;
+}
+
 let headerObj = {};
 
 let CLA = process.argv;
@@ -15,11 +21,6 @@ let length = 0;
 if(CLA[5] !== undefined){
   body = CLA[5];
   length = body.length;
-}
-
-let port = 80;
-if (host === 'localhost') {
-  port = 8080;
 }
 
 if (!CLA[2]) {
@@ -37,7 +38,6 @@ if (!CLA[2]) {
 let date = new Date();
 
 let request = `${method} ${URI} HTTP/1.1\r\nAccept: text/html\r\nDate: ${date}\r\nHost: ${host}\r\nContent-Length: ${length}\r\nConnection: keep-alive\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36\r\n\r\n${body}`;
-
 
 const client = net.createConnection(port, host, function() {
   client.setEncoding('utf-8');
