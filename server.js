@@ -9,10 +9,9 @@ let response = '';
 
 function craftResponse (status, length, body) {
   let customResponse = `HTTP/1.1 ${status}
-Date: ${date}
-Content-Type: text/html; charset=utf-8
-Content-Length: ${length}
-
+Date: ${date}\r\n
+Content-Type: text/html; charset=utf-8\r\n
+Content-Length: ${length}\r\n\r\n
 ${body}`;
 
   return customResponse;
