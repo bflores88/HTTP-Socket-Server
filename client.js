@@ -20,7 +20,7 @@ if (host === 'localhost') {
   port = 8080;
 }
 
-if(CLA[2] === '-save'){
+if (CLA[2] === '-save') {
   method = 'GET';
   host = CLA[4];
   URI = '/';
@@ -39,7 +39,10 @@ if (!CLA[2]) {
     Valid methods:
     GET - I want a resource including the header and body
     POST - I want to send you data
-    HEAD - I just want the response headers\r\n\r\n`,
+    HEAD - I just want the response headers\r\n\r\n
+    To save a response message body as a file, type the following:\n
+    $ node client.js -save example_index.html example.com\n\n\
+    This would save the contents of the response message from requesting www.example.com to a file named example_index.html\r\n\r\n`,
   );
   process.exit();
 }
@@ -64,7 +67,7 @@ client.on('data', function(data) {
     client.on('close', function() {
       process.stdout.write('Client closed');
     });
-  } else if (getStatus.indexOf('50') !== -1){
+  } else if (getStatus.indexOf('50') !== -1) {
     process.stdout.write('Servor Error');
 
     client.on('close', function() {
@@ -75,11 +78,12 @@ client.on('data', function(data) {
     let getHeader = data.slice(0, headerEnd);
     headerObj[host] = getHeader;
 
-    headerObj[URI] = data.slice(headerEnd, data.length);
+    let responseBody = data.slice(headerEnd, data.length);
+    headerObj[URI] = responseBody;
 
-    fs.writeFile(file, data, function(err) {
-      if(err) console.log(err)
-    })
+    fs.writeFile(file, responseBody, function(err) {
+      if (err) console.log(err);
+    });
 
     console.log(headerObj);
 
