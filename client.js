@@ -2,19 +2,29 @@
 
 const net = require('net');
 const process = require('process');
+const fs = require('fs');
 
 let headerObj = {};
 
 let CLA = process.argv;
+
 let host = CLA[2];
 let method = CLA[3];
 let URI = CLA[4];
 let body = '';
 let length = 0;
+let file = null;
 
 let port = 80;
 if (host === 'localhost') {
   port = 8080;
+}
+
+if(CLA[2] === '-save'){
+  method = 'GET';
+  host = CLA[4];
+  URI = '/';
+  file = CLA[3];
 }
 
 if (CLA[5] !== undefined) {
@@ -40,18 +50,38 @@ let request = `${method} ${URI} HTTP/1.1\r\nAccept: text/html\r\nDate: ${date}\r
 
 const client = net.createConnection(port, host, function() {
   client.setEncoding('utf-8');
-  process.stdout.write('Client connected to: ' + port);
+  process.stdout.write('Client connected to: ' + port + '\n');
   process.stdout.write('My Req: ' + request);
   client.write(request);
 });
 
 client.on('data', function(data) {
-  if (data.indexOf('HTTP/1.1 40' !== -1)) {
-    process.stdout.write('what the hell\r\n');
+  let getStatus = data.slice(0, data.indexOf('\n'));
+
+  if (getStatus.indexOf('40') !== -1) {
+    process.stdout.write('Client Error - please check Host, Method, and URI');
+
+    client.on('close', function() {
+      process.stdout.write('Client closed');
+    });
+  } else if (getStatus.indexOf('50') !== -1){
+    process.stdout.write('Servor Error');
+
+    client.on('close', function() {
+      process.stdout.write('Client closed');
+    });
   } else {
     let headerEnd = data.indexOf('\r\n\r\n');
     let getHeader = data.slice(0, headerEnd);
     headerObj[host] = getHeader;
+
+    headerObj[URI] = data.slice(headerEnd, data.length);
+
+    fs.writeFile(file, data, function(err) {
+      if(err) console.log(err)
+    })
+
+    console.log(headerObj);
 
     process.stdout.write(data);
   }
