@@ -13,7 +13,7 @@ let method = CLA[3];
 let URI = CLA[4];
 let body = '';
 let length = 0;
-let file = null;
+let file = 'your.html';
 
 let port = 80;
 if (host === 'localhost') {
@@ -34,8 +34,9 @@ if (CLA[5] !== undefined) {
 
 if (!CLA[2]) {
   process.stdout.write(
-    `\r\n\r\nPlease enter valid arguments for host, method, URI, and body (if POST method is used).\r\n
-    Example:  $ node client.js www.example.com GET /\r\n
+    `\r\n\r\nPlease enter valid arguments for host, method, URI, and body (if POST method is used).  Do not include http:// or https:// in the host or URI.\r\n
+    Example of GET:  $ node client.js www.example.com GET /\r\n
+    Example of POST: $ node client.js www.example.com POST / hello\r\n
     Valid methods:
     GET - I want a resource including the header and body
     POST - I want to send you data
@@ -81,11 +82,11 @@ client.on('data', function(data) {
     let responseBody = data.slice(headerEnd, data.length);
     headerObj[URI] = responseBody;
 
-    fs.writeFile(file, responseBody, function(err) {
-      if (err) console.log(err);
-    });
-
-    console.log(headerObj);
+    if(CLA[2] === '-save'){
+      fs.writeFile(file, responseBody, function(err) {
+        if (err) console.log(err);
+      });
+    }
 
     process.stdout.write(data);
   }
