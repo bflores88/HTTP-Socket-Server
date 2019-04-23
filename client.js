@@ -64,10 +64,8 @@ client.on('data', function(data) {
 
   if (getStatus.indexOf('40') !== -1) {
     process.stdout.write('Client Error - please check Host, Method, and URI');
-
   } else if (getStatus.indexOf('50') !== -1) {
     process.stdout.write('Server Error');
-
   } else {
     let headerEnd = data.indexOf('\r\n\r\n');
     let getHeader = data.slice(0, headerEnd);
@@ -76,7 +74,7 @@ client.on('data', function(data) {
     let responseBody = data.slice(headerEnd, data.length);
     headerObj[URI] = responseBody;
 
-    if(CLA[2] === '-save'){
+    if (CLA[2] === '-save') {
       fs.writeFile(file, responseBody, function(err) {
         if (err) console.log(err);
       });
@@ -85,9 +83,10 @@ client.on('data', function(data) {
     process.stdout.write(data);
   }
 
-  if (data.toString().endsWith('exit')) {
+  client.on('end', function() {
     client.end();
-  }
+    process.exit();
+  });
 });
 
 client.on('close', function() {
