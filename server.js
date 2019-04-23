@@ -23,7 +23,6 @@ const server = net
     socket.setEncoding('utf8');
     socket.on('data', (data) => {
       // this is the request
-      console.log(data);
 
       // do work here
       //interpret data being requested for path & craft responses accordingly
