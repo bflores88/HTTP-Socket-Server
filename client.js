@@ -83,10 +83,12 @@ client.on('data', function(data) {
     process.stdout.write(data);
   }
 
-  client.on('end', function() {
-    client.end();
-    process.exit();
-  });
+});
+
+client.on('end', function() {
+  client.end();
+  process.exit();
+  console.log('Connection ended')
 });
 
 client.on('close', function() {
