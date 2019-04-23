@@ -65,15 +65,9 @@ client.on('data', function(data) {
   if (getStatus.indexOf('40') !== -1) {
     process.stdout.write('Client Error - please check Host, Method, and URI');
 
-    client.on('close', function() {
-      process.stdout.write('Client closed');
-    });
   } else if (getStatus.indexOf('50') !== -1) {
-    process.stdout.write('Servor Error');
+    process.stdout.write('Server Error');
 
-    client.on('close', function() {
-      process.stdout.write('Client closed');
-    });
   } else {
     let headerEnd = data.indexOf('\r\n\r\n');
     let getHeader = data.slice(0, headerEnd);
