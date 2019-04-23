@@ -86,7 +86,7 @@ client.on('data', function(data) {
   }
 
   if (data.toString().endsWith('exit')) {
-    client.destroy();
+    client.end();
   }
 });
 
